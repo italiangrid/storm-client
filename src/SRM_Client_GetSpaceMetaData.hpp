@@ -1,0 +1,25 @@
+#ifndef SRM_CLIENT_GETSPACEMETADATA_HPP_
+#define SRM_CLIENT_GETSPACEMETADATA_HPP_
+
+#include "SRM_Client_Common.hpp"
+
+#include <iostream>
+
+class SRM_Client_GetSpaceMetaData : public SRM_Client_Common<struct ns1__srmGetSpaceMetaDataRequest, struct ns1__srmGetSpaceMetaDataResponse_>
+{
+    typedef SRM_Client_Common<struct ns1__srmGetSpaceMetaDataRequest, struct ns1__srmGetSpaceMetaDataResponse_> SRM_Client_Common_template;
+    
+public:
+    SRM_Client_GetSpaceMetaData() : SRM_Client_Common_template("GetSpaceMetaData") {}
+    void printRequestInputdata();
+    void printRequestOutputdata();
+    void* getRequestOutputdata() { return static_cast<void*> (_response->srmGetSpaceMetaDataResponse);}
+
+    private:
+        int parse_RequestOptions(char opt, int index, int argc, char** argv);
+        void print_Usage_Request();
+        void set_Request_Status();
+        int execute_Request();
+};
+
+#endif /*SRM_CLIENT_GETSPACEMETADATA_HPP_*/

@@ -1,5 +1,2 @@
-source clients-setup.sh
-./autogen.sh
-./configure CFLAGS=-g CXXFLAGS=-g
-make clean
+sh run_autotools.sh
 make

@@ -1,56 +1,79 @@
-%define name         srmv2-storm-client
+%define name         @PACKAGE@
 %define version      @VERSION@
-%define release      @STORMPATCHLVL@
-%define flavor       @GLOBUS_FLAVOR@
-%define builddir     $RPM_BUILD_DIR/%{name}-%{flavor}-%{version}
-%define globusdir    @GLOBUS_LOCATION@
-%define gsoapdir     @GSOAP_DIR@
-%define gsoapgsidir  @GSOAPGSI_DIR@
-%define prefix       @PREFIX@
+%define release      @STORM_CLIENT_AGE_NUMBER@.@STORM_CLIENT_SO@
 
-Name:           %{name}-%{flavor}
+%define builddir     @RPM_BUILD_DIR@/build-%{name}-%{version}
+
+%define globusdir    @GLOBUS_LOCATION@
+%define flavorthr    @GLOBUS_THR_FLAVOR@
+%define flavornothr  @GLOBUS_NOTHR_FLAVOR@
+
+%define glitedir     @GLITE_LOCATION@
+%define vomsdir      @VOMS_INSTALL_PATH@
+%define vomsincludedir @VOMS_INCLUDE_PATH@
+
+%define gsoapdir       @GSOAP_LOCATION@
+%define gsoapwsdl2hdir @GSOAP_WSDL2H_LOCATION@
+%define cgsigsoapdir   @CGSI_GSOAP_LOCATION@
+
+%define stormclientdir @STORM_CLIENT_LOCATION@
+
+%define cgsigsoapversion @CGSIGSOAP_VERSION@
+
+Name:           %{name}
 Version:        %{version}
 Release:        %{release}
-Vendor:         INFN FIRB Grid.It Project (2004)
-Packager:       storm@infn.it
-Copyright:      INFN License
+Vendor:         INFN - CNAF (2009)
+Packager:       Elisabetta Ronchieri <elisabetta.ronchieri@cnaf.infn.it>
+License:        Apache License, Version 2.0.
 URL:            http://grid-it.cnaf.infn.it
 Source:         @PACKAGE@-%{version}.tar.gz
 Group:          Application/Generic
 AutoReqProv:    no
-Requires:       CGSI_gSOAP_2.6 >= 1.1.9
-BuildRoot:      /var/tmp/%{name}-%{flavor}-%{version}
-Prefix:         %{prefix}
-Summary:        Provides the the srmv2 storm test clients. 
+BuildRoot:      %{builddir}/var/tmp/%{name}-%{version}
+Prefix:         /opt/storm/srm-clients
+Summary:        Provides the the StoRM SRM v2.2 clients. 
+
+%define debug_package %{nil}
+
 %description
-This is the installation bundle for the srmv2 storm test clients.
-This bundle is part of the StoRM utility 
-package that implements an SRM interface to a GPFS parallel
-filesystem.
+This is the installation bundle for the StoRM SRM v2.2 clients.
+This bundle is part of the StoRM utility package that implements an SRM 
+interface to a GPFS parallel filesystem.
+
+%package %{flavorthr}
+Summary:        Provides the the StoRM SRM v2.2 clients.
+Group: Application/generic
+AutoReqProv:    no
+Requires:       CGSI_gSOAP_2.7-voms >= %{cgsigsoapversion}
+
+%description %{flavorthr}
+This is the installation bundle for the StoRM SRM v2.2 clients.
+This bundle is part of the StoRM utility package that implements an SRM
+interface to a GPFS parallel filesystem.
 
 %prep
 %setup -n @PACKAGE@-%{version} 
 
 %build
-source clients-setup.sh
-./autogen.sh
-./configure --prefix=%{prefix} --enable-all --enable-gsoapgsi --with-globus-location=%{globusdir} --with-globus-flavor=%{flavor} --with-gsoap-dir=%{gsoapdir} --with-gsoapgsi-dir=%{gsoapgsidir}
-
-gmake
+./bootstrap
+./configure --prefix=%{prefix} --with-globus-prefix=%{globusdir} --with-globus-nothr-flavor=%{flavornothr} --with-globus-thr-flavor=%{flavorthr} --with-gsoap-location=%{gsoapdir} --with-gsoap-wsdl2h-location=%{gsoapwsdl2hdir} --with-gsoap-version=2.7.6b --with-gsoap-wsdl2h-version=2.7.6b --with-cgsi-gsoap-location=%{cgsigsoapdir} --with-glite-location=%{glitedir} --with-voms-prefix=%{vomsdir} --with-voms-include=%{vomsincludedir} --with-storm-client-location=%{stormclientdir} --enable-gsoapgsi
+make
 
 %install
 if [ -d $RPM_BUILD_ROOT ]; then rm -rf $RPM_BUILD_ROOT; fi
 mkdir -p $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-# Build the file-list automatically :)
-cd $RPM_BUILD_ROOT
-find . -type d | sed '1,3d;s,^\.,\%attr(-\,root\,root) \%dir ,' > $RPM_BUILD_DIR/file.list.%{name}
-find . -type f | sed 's,^\.,\%attr(-\,root\,root) ,' >> $RPM_BUILD_DIR/file.list.%{name}
-find . -type l | sed 's,^\.,\%attr(-\,root\,root) ,' >> $RPM_BUILD_DIR/file.list.%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-rm ../file.list.%{name}
 
-%files -f ../file.list.%{name}
+%files %{flavorthr}
+%defattr(755,root,root)
+%{prefix}/bin/clientSRM
+%{prefix}/share/doc/storm-srm-clients-%{version}/LICENSE
 
+%changelog
+* Wed Aug 9 2010 Elisabetta Ronchieri> <elisabetta.ronchieri@cnaf.infn.it>
+- version %{version}-%{release}
+- introduced LICENSE

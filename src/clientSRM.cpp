@@ -1,6 +1,7 @@
 #include "SRM_Service.hpp"
 #include "SRM_Client_All.hpp"
 #include "storm_util.hpp"
+#include "clients_version.h"
 
 #include "srmSoapBinding.nsmap"
 
@@ -30,7 +31,7 @@ void printLine(bool ok)
 
 void printUsage(char *programName)
 {
-    cout << "\nUsage: " << programName << " <requestName> <requestOptions>\n";
+    cout << "\nUsage: " << programName << " <requestName> <requestOptions>\n\n";
     cout << "<requestName> can be (it is not case-sensitive):\n";
     cout << "  Discovery functions:\n";
     cout << "                      Ping\n";
@@ -63,6 +64,9 @@ void printUsage(char *programName)
     cout << "                      ReleaseSpace            (or rsp)\n";
     cout << "                      GetSpaceTokens          (or gst)\n\n";
     cout << "Type \"" << programName << " <requestName> -h\" to get help about <requestName> options\n\n";
+    cout << "Global options:\n";
+    cout << "    -h, --help            Print this help message\n";
+    cout << "    -v, --version         Print version information\n\n";
 }
 
 // Returns an instance of the request SRM service
@@ -145,10 +149,18 @@ int main(int argc, char** argv)
         exit(1);
     }
     // If the first argument starts with '-' it is interpreted as HELP    
-    if (*argv[1] == '-') {
+    string first_arg(argv[1]);
+    if ((first_arg == "-v") || (first_arg == "--version")) {
+        cout << "StoRM SRM v2.2 clients version " << clients_version << endl << endl;
+        exit(0);
+    } else if ((first_arg == "-h") || (first_arg == "--help")) {
         printUsage(argv[0]);
+        exit(0);
+    } else if (*argv[1] == '-') {
+        cout << "Invalid option: " << argv[1] << endl << endl;
         exit(1);
     }
+
     // The first argument is the request type
     string serviceName(argv[1]);
     // Convert serviceName to lowercase letters

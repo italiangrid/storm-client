@@ -1,0 +1,6 @@
+#ifndef _CLIENTS_VERSION_H
+#define _CLIENTS_VERSION_H
+
+static const char* clients_version = "@VERSION@-@STORM_CLIENT_AGE_NUMBER@";
+
+#endif /* _CLIENTS_VERSION_H */

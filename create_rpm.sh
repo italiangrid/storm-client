@@ -1,5 +1,3 @@
-source clients-setup.sh
-./autogen.sh
-./configure
+sh run_autotools.sh
 make clean
 make rpm

@@ -20,10 +20,16 @@
 using namespace std;
 
 template <typename type_t>
-bool string2num(type_t& x, const string& s)
-{
+bool string2num(type_t& x, const string& s) {
   istringstream ss(s);
   return (ss >> x).fail();
+}
+
+template<class T>
+inline std::string to_string(const T& t) {
+    std::stringstream ss;
+    ss << t;
+    return ss.str();
 }
 
 template<typename srm_request_t, typename srm_response_t>
@@ -54,7 +60,11 @@ public:
         // Initialize GSOAP stuff and CGSI plugin
         soap_init(&_soap);
 #ifdef GSI_PLUGINS
+        if (_serviceName == "Copy") {
         _flags = CGSI_OPT_DISABLE_NAME_CHECK|CGSI_OPT_DELEG_FLAG;
+        } else {
+        	_flags = CGSI_OPT_DISABLE_NAME_CHECK;
+        }
         soap_register_plugin_arg(&_soap, client_cgsi_plugin, &_flags);
 #endif
         // Allocate memory for the request input/output data structures
@@ -2047,11 +2057,11 @@ protected:
         cout <<"\n";
     }
     
-    void print_Data(int indent1, const char *fieldName, struct ns1__ArrayOfTMetaDataPathDetail *fieldValue)
+    void print_Data(int indent1, string prefix, const char *fieldName, struct ns1__ArrayOfTMetaDataPathDetail *fieldValue)
     {
         struct ns1__TMetaDataPathDetail **array;
         ostringstream sstr;
-        string indent(indent1, ' ');
+        string indent_base(indent1, ' ');
         int i, arraySize;
         
         if (fieldValue == NULL) {
@@ -2060,64 +2070,64 @@ protected:
         }
         arraySize = fieldValue->__sizepathDetailArray;
         array = fieldValue->pathDetailArray;
-        cout << indent << fieldName << " (size=" << arraySize << ")\n";
-        indent1 += 2;
-        indent = string(indent1, ' ');
+        cout << indent_base << fieldName << " (size=" << arraySize << ")\n";
+        string indent = string(indent1 + 2, ' ');
         for (i=0; i<arraySize; i++) {
             sstr.str(string());
-            sstr << indent << "[" << i << "] path";
+            sstr << indent << "[" << prefix << i << "] path";
             print_Data(2, sstr.str().c_str(), array[i]->path);
             sstr.str(string());
-            sstr << indent << "[" << i << "] size";
+            sstr << indent << "[" << prefix << i << "] size";
             print_Data(2, sstr.str().c_str(), array[i]->size);
             sstr.str(string());
-            sstr << indent << "[" << i << "] createdAtTime";
+            sstr << indent << "[" << prefix << i << "] createdAtTime";
             print_Data(2, sstr.str().c_str(), array[i]->createdAtTime);
             sstr.str(string());
-            sstr << indent << "[" << i << "] lastModificationTime";
+            sstr << indent << "[" << prefix << i << "] lastModificationTime";
             print_Data(2, sstr.str().c_str(), array[i]->lastModificationTime);
             sstr.str(string());
-            sstr << indent << "[" << i << "] fileStorageType";
+            sstr << indent << "[" << prefix << i << "] fileStorageType";
             print_Data(2, sstr.str().c_str(), array[i]->fileStorageType);
             sstr.str(string());
-            sstr << indent << "[" << i << "] retentionPolicyInfo";
+            sstr << indent << "[" << prefix << i << "] retentionPolicyInfo";
             print_Data(2, sstr.str().c_str(), array[i]->retentionPolicyInfo);
             sstr.str(string());
-            sstr << indent << "[" << i << "] fileLocality";
+            sstr << indent << "[" << prefix << i << "] fileLocality";
             print_Data(2, sstr.str().c_str(), array[i]->fileLocality);
             sstr.str(string());
-            sstr << indent << "[" << i << "] arrayOfSpaceTokens";
+            sstr << indent << "[" << prefix << i << "] arrayOfSpaceTokens";
             print_Data(2, sstr.str().c_str(), array[i]->arrayOfSpaceTokens);
             sstr.str(string());
-            sstr << indent << "[" << i << "] type";
+            sstr << indent << "[" << prefix << i << "] type";
             print_Data(2, sstr.str().c_str(), array[i]->type);
             sstr.str(string());
-            sstr << indent << "[" << i << "] lifetimeAssigned";
+            sstr << indent << "[" << prefix << i << "] lifetimeAssigned";
             print_Data(2, sstr.str().c_str(), array[i]->lifetimeAssigned);
             sstr.str(string());
-            sstr << indent << "[" << i << "] lifetimeLeft";
+            sstr << indent << "[" << prefix << i << "] lifetimeLeft";
             print_Data(2, sstr.str().c_str(), array[i]->lifetimeLeft);
             sstr.str(string());
-            sstr << indent << "[" << i << "] ownerPermission";
+            sstr << indent << "[" << prefix << i << "] ownerPermission";
             print_Data(2, sstr.str().c_str(), array[i]->ownerPermission);
             sstr.str(string());
-            sstr << indent << "[" << i << "] groupPermission";
+            sstr << indent << "[" << prefix << i << "] groupPermission";
             print_Data(2, sstr.str().c_str(), array[i]->groupPermission);
             sstr.str(string());
-            sstr << indent << "[" << i << "] otherPermission";
+            sstr << indent << "[" << prefix << i << "] otherPermission";
             print_Data(2, sstr.str().c_str(), array[i]->otherPermission);
             sstr.str(string());
-            sstr << indent << "[" << i << "] checkSumType";
+            sstr << indent << "[" << prefix << i << "] checkSumType";
             print_Data(2, sstr.str().c_str(), array[i]->checkSumType);
             sstr.str(string());
-            sstr << indent << "[" << i << "] checkSumValue";
+            sstr << indent << "[" << prefix << i << "] checkSumValue";
             print_Data(2, sstr.str().c_str(), array[i]->checkSumValue);
             sstr.str(string());
-            sstr << indent << "[" << i << "] status";
+            sstr << indent << "[" << prefix << i << "] status";
             print_Data(2, sstr.str().c_str(), array[i]->status);
             sstr.str(string());
-            sstr << indent << "[" << i << "] arrayOfSubPaths";
-            print_Data(2, sstr.str().c_str(), array[i]->arrayOfSubPaths);
+            sstr << indent << "[" << prefix << i << "] arrayOfSubPaths";
+            string nested_prefix = prefix + to_string(i) + "-";
+            print_Data(indent1, nested_prefix, sstr.str().c_str(), array[i]->arrayOfSubPaths);
         }
     }
     

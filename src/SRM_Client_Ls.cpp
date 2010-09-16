@@ -85,5 +85,5 @@ void SRM_Client_Ls::printRequestInputdata()
 void SRM_Client_Ls::printRequestOutputdata()
 {
 	print_Data(2, "requestToken", _response->srmLsResponse->requestToken);
-	print_Data(2, "details", _response->srmLsResponse->details);
+	print_Data(2, string(), "details", _response->srmLsResponse->details);
 }

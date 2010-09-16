@@ -1,33 +1,43 @@
-# $Id$
-#*********************************************************************
-#*
-#* Author: Alberto Forti <alberto.forti@cnaf.infn.it>
-#*
-#* INFN-CNAF
-#*
-#* Date: Dec 2006
-#*
-#*********************************************************************
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
 
 MTCCFLAGS = -DCTHREAD_LINUX -D_THREAD_SAFE -D_REENTRANT
 
-SOAPFILES = srmv2H.h srmv2Stub.h srmv2C.c srmv2Server.c srmv2Client.c srmSoapBinding.nsmap
-
-MAINTAINERCLEANFILES = Makefile.in $(SOAPFILES) stdsoap2.c
-TOCLEAN = $(SOAPFILES) srm.v2.2.h *.res.xml *.req.xml stdsoap2.c
-
-EXTRA_DIST = srm.v2.2.wsdl typemap.dat
-
-INCLUDES = -I. @GSOAPGSI_CFLAGS@ \
-           -I@GSOAP_DIR@ \
-           -I@GSOAPGSI_DIR@/include \
-           -DSTORMCONFIG=\"$(STORMCONFIG)\" \
-           -DLOGFILE=\"$(LOGFILE)\" \
-           $(MTCCFLAGS)
+GENERATED_GSOAP_INCLUDES = $(top_builddir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@
 
 bin_PROGRAMS = clientSRM
 
-clientSRM_SOURCES = storm_util.cpp storm_util.hpp soap_util.hpp \
+noinst_LTLIBRARIES = libstormclients.la
+
+clientSRM_SOURCES = clientSRM.cpp
+clientSRM_LDADD = -lstormclients \
+  @GLITE_LDFLAGS@ \
+  @VOMS_LIBS@ \
+  @CGSI_VOMS_GSOAP_PTHR_LIBS@ \
+  @GLOBUS_GSS_THR_LIBS@ \
+  -lz -lm  
+
+clientSRM_DEPENDENCIES = libstormclients.la
+
+noinst_INCLUDES = \
+  $(GENERATED_GSOAP_INCLUDES)/srm.v2.2.h \
+  $(GENERATED_GSOAP_INCLUDES)/srmv2H.h \
+  $(GENERATED_GSOAP_INCLUDES)/srmv2Stub.h
+    
+libstormclients_la_SOURCES = \
+    storm_util.cpp storm_util.hpp soap_util.hpp \
                     SRM_Client_Ping.cpp SRM_Client_Ping.hpp \
                     SRM_Client_GetTransferProtocols.cpp SRM_Client_GetTransferProtocols.hpp \
                     SRM_Client_Mkdir.cpp SRM_Client_Mkdir.hpp \
@@ -54,31 +64,36 @@ clientSRM_SOURCES = storm_util.cpp storm_util.hpp soap_util.hpp \
                     SRM_Client_GetSpaceTokens.cpp SRM_Client_GetSpaceTokens.hpp \
                     SRM_Client_BOL.cpp SRM_Client_BOL.hpp \
                     SRM_Client_StatusBOL.cpp SRM_Client_StatusBOL.hpp \
-                    SRM_Client_Common.hpp SRM_Service.hpp SRM_Client_All.hpp clientSRM.cpp \
-                    srmv2C.c srmv2Client.c stdsoap2.c
+    SRM_Client_Common.hpp SRM_Service.hpp SRM_Client_All.hpp \
+    srmv2C.c \
+    srmv2Client.c \
+    stdsoap2.c \
+    $(noinst_INCLUDES)
 
-clientSRM_LDFLAGS = @GLOBUS_LDFLAGS@ @GSOAPGSI_LDFLAGS@ @SSL_AND_CRYPTO@
-clientSRM_LDADD = @GLOBUS_PKG_LIBS@ @GSOAPGSI_LDADD@ -lz -lm
-#clientSRM_DEPENDENCIES = $(top_srcdir)/srmv2/libsrmv2storm.la
+INCLUDES = -I$(GENERATED_GSOAP_INCLUDES) \
+    @GLITE_CFLAGS@/glite/security/voms \
+    @GLOBUS_THR_CFLAGS@ \
+    @STORM_CLIENT_CFLAGS@ \
+    @CGSI_GSOAP_CFLAGS@ \
+    @GSOAP_CFLAGS@ \
+    $(MTC_CFLAGS)
 
-$(SOAPFILES): srm.v2.2.h
-	@GSOAP_DIR@/soapcpp2 -c -p srmv2 srm.v2.2.h
-
-srm.v2.2.h: srm.v2.2.wsdl
-	@GSOAP_DIR@/wsdl2h -c -t typemap.dat srm.v2.2.wsdl
+MAINTAINERCLEANFILES = Makefile.in \
+    stdsoap2.c \
+    srmv2C.c \
+    srmv2Client.c
 
 stdsoap2.c:
-	@echo
-	/bin/cp @GSOAP_DIR@/stdsoap2.c .
+	@echo "Copying file \"stdsoap2.c\" from $(@GSOAP_LOCATION@)"
+	/bin/cp @GSOAP_STDSOAP2_LOCATION@/stdsoap2.c .
 
-storm_util.o: $(SOAPFILES) stdsoap2.c
+srmv2C.c:
+	@echo "Copying file \"srmv2C.c\" from $(GENERATED_GSOAP_INCLUDES)"
+	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2C.c .
 
-clean :
-	/bin/rm -f $(SOAPFILES) stdsoap2.c srm.v2.2.h *.req.xml *.res.xml srmv2ClientLib.c srmv2ServerLib.c
+srmv2Client.c:
+	@echo "Copying file \"srmv2Server.c\" from $(GENERATED_GSOAP_INCLUDES)"
+	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2Client.c .
 
-dist-hook:
-	cd $(distdir)
-	for file in $(MAINTAINERCLEANFILES); do \
-	    /bin/rm $(distdir)/$$file; \
-	done
-
+distclean-local:
+	rm -f stdsoap2.c srmv2C.c srmv2Client.c

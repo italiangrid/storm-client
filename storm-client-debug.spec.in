@@ -29,7 +29,7 @@
 
 Name:           %{name}
 Version:        %{version}
-Release:        %{release}
+Release:        %{release}.dbg
 Vendor:         EMI
 Packager:       Elisabetta Ronchieri <elisabetta.ronchieri@cnaf.infn.it>
 License:        Apache License
@@ -53,8 +53,6 @@ Requires: voms
 Requires: CGSI_gSOAP_2.7-voms
 Requires: gsoap
 
-%define debug_package %{nil}
-
 %description
 This is the installation bundle for the StoRM SRM v2.2 clients.
 This bundle is part of the StoRM utility package that implements an SRM 
@@ -65,7 +63,7 @@ interface to a GPFS parallel filesystem.
 
 %build
 ./bootstrap emi.storm.common
-./configure --prefix=/usr --bindir=/usr/bin --datadir=/usr/share --with-gsoap-location=%{gsoapdir} --with-gsoap-wsdl2h-location=%{gsoapwsdl2hdir} --with-gsoap-version=2.7.13 --with-gsoap-wsdl2h-version=1.2.13 --with-cgsi-gsoap-location=%{cgsigsoapdir} --with-voms-prefix=%{vomsdir} --with-voms-include=%{vomsincludedir} --with-storm-client-location=%{stormclientdir} --enable-gsoapgsi
+./configure --prefix=/usr --bindir=/usr/bin --datadir=/usr/share --enable-debug=yes --with-gsoap-location=%{gsoapdir} --with-gsoap-wsdl2h-location=%{gsoapwsdl2hdir} --with-gsoap-version=2.7.13 --with-gsoap-wsdl2h-version=1.2.13 --with-cgsi-gsoap-location=%{cgsigsoapdir} --with-voms-prefix=%{vomsdir} --with-voms-include=%{vomsincludedir} --with-storm-client-location=%{stormclientdir} --enable-gsoapgsi
 make
 
 %install

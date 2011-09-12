@@ -1,15 +1,16 @@
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
+# Copyright (c) Istituto Nazionale di Fisica Nucleare (INFN). 2006-2010.
 #
-#        http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 #
 # Authors: Elisabetta Ronchieri <elisabetta.ronchieri@cnaf.infn.it>
@@ -17,12 +18,18 @@
 
 EXTRA_DIST = \
     bootstrap \
+    ChangeLog \
+    README \
     LICENSE \
+    CREDITS \
     storm-client.spec.in \
     project
 
 docdir = $(datadir)/doc/@PACKAGE@-@VERSION@
-doc_DATA = LICENSE
+doc_DATA = LICENSE \
+	CREDITS \
+	ChangeLog \
+	README
 
 ## Subdirectories list
 SUBDIRS = wsdl src
@@ -30,9 +37,10 @@ SUBDIRS = wsdl src
 ## Default flags to run aclocal
 ACLOCAL_AMFLAGS = -I project -I config
 
-SPEC_FILE = storm-client.spec
+SPEC_FILE = \
+    storm-client.spec
 
-RPM_MAIN_DIR = @RPM_DIR@/rpm
+RPM_MAIN_DIR = $(PWD)/rpm
 RPM_TMP_DIR = $(RPM_MAIN_DIR)/tmp
 RPM_SOURCE = $(RPM_MAIN_DIR)/SOURCES
 RPM_SPEC = $(RPM_MAIN_DIR)/SPECS
@@ -46,7 +54,7 @@ rpm: dist
 	/bin/cp -u @PACKAGE@-@VERSION@.tar.gz $(RPM_SOURCE)
 	/bin/cp $(SPEC_FILE) $(RPM_SPEC)
 	cd $(RPM_SPEC); \
-        /usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" -ba $(RPM_SPEC)/$(SPEC_FILE)
+	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -ba $(RPM_SPEC)/storm-client.spec
 	mkdir -p @DISTSOURCE@ @DISTBIN@
 
 stage:
@@ -71,7 +79,8 @@ stage:
 
 distsrc:
 	mkdir -p @DISTSOURCE@
-	cp $(distdir).tar.gz $(DISTSOURCE)/$(distdir).tar.gz
+	mv $(distdir).tar.gz $(distdir).src.tar.gz
+	cp $(distdir).src.tar.gz $(DISTSOURCE)/$(distdir)-@STORM_CLIENT_AGE_NUMBER@.@STORM_CLIENT_SO@.@STORM_CLIENT_ARCH@.src.tar.gz
 	cp $(RPM_SRPM)/*.rpm @DISTSOURCE@
 
 distbin:
@@ -96,7 +105,7 @@ distbin:
           $(MAKE) $(AM_MAKEFLAGS) "$$target-am" $$prefix_arg || exit 1; \
         fi; test -z "$$fail"; \
         pushd $$tmpdistbin; \
-        $(AMTAR) -zcf $(DISTBIN)/$(distdir).tar.gz .; \
+        $(AMTAR) -zcf $(DISTBIN)/$(distdir)-@STORM_CLIENT_AGE_NUMBER@.@STORM_CLIENT_SO@.@STORM_CLIENT_ARCH@.tar.gz .; \
         popd; \
 	rm -rf $$tmpdistbin
 	cp $(RPM_RPM)/*/*.rpm @DISTBIN@

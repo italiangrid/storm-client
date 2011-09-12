@@ -1,23 +1,23 @@
+# Copyright (c) Istituto Nazionale di Fisica Nucleare (INFN). 2006-2010.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#        http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 #
 # Authors: Alberto Forti <alberto.forti@cnaf.infn.it>
 #
 
 AC_PREREQ([2.59])
-AC_INIT([storm srm clients], [1.4.2])
+AC_INIT([storm srm client], [1.5.0])
 AC_CONFIG_AUX_DIR([./project])
 AM_INIT_AUTOMAKE([1.6.3 subdir-objects])
 AC_CONFIG_SRCDIR([src/clientSRM.cpp])
@@ -25,7 +25,7 @@ AC_CONFIG_SRCDIR([src/clientSRM.cpp])
 # Release number
 osdist=`cat /etc/redhat-release | awk 'BEGIN {FS="release "} {print $2}'| awk 'BEGIN {FS="."} {print $1}'`
 AC_SUBST([STORM_CLIENT_SO], [sl$osdist])
-AC_SUBST([STORM_CLIENT_AGE_NUMBER], [4])
+AC_SUBST([STORM_CLIENT_AGE_NUMBER], [7])
 
 # Notices.
 AC_COPYRIGHT([See LICENCE file for details])
@@ -53,7 +53,83 @@ AC_CHECK_LIB([pthread], [main])
 AC_C_CONST
 AC_TYPE_SIZE_T
 
-AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r memset select socket strchr strerror strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l sprintf_l wctomb mbtowc getenv])
+# Set template config.h (required by stdsoap)
+# This part should probably go in a macron in gsoap.m4 (something like AC_GSOAP_SRC)
+# BEGIN:
+AH_TEMPLATE(HAVE_FTIME)
+AH_TEMPLATE(HAVE_GMTIME)
+AH_TEMPLATE(HAVE_GMTIME_R)
+AH_TEMPLATE(HAVE_GETTIMEOFDAY)
+AH_TEMPLATE(HAVE_LOCALTIME_R)
+AH_TEMPLATE(HAVE_MBTOWC)
+AH_TEMPLATE(HAVE_STRTOF)
+AH_TEMPLATE(HAVE_STRTOD)
+AH_TEMPLATE(HAVE_STRTOL)
+AH_TEMPLATE(HAVE_STRTOLL)
+AH_TEMPLATE(HAVE_STRTOUL)
+AH_TEMPLATE(HAVE_STRTOULL)
+AH_TEMPLATE(HAVE_SSCANF)
+AH_TEMPLATE(HAVE_WCTOMB)
+AH_TEMPLATE(HAVE_TIMEGM)
+
+# For IPv6
+AH_TEMPLATE([WITH_IPV6], [For Ipv6 support])
+AC_DEFINE(WITH_IPV6)
+
+AC_CHECK_FUNC(ftime,           [AC_DEFINE(HAVE_FTIME)])
+AC_CHECK_FUNC(gmtime,          [AC_DEFINE(HAVE_GMTIME)])
+AC_CHECK_FUNC(gmtime_r,        [AC_DEFINE(HAVE_GMTIME_R)])
+AC_CHECK_FUNC(gettimeofday,    [AC_DEFINE(HAVE_GETTIMEOFDAY)])
+AC_CHECK_FUNC(localtime_r,     [AC_DEFINE(HAVE_LOCALTIME_R)])
+AC_CHECK_FUNC(mbtowc,          [AC_DEFINE(HAVE_MBTOWC)])
+AC_CHECK_FUNC(strtof,          [AC_DEFINE(HAVE_STRTOF)])
+AC_CHECK_FUNC(strtod,          [AC_DEFINE(HAVE_STRTOD)])
+AC_CHECK_FUNC(strtol,          [AC_DEFINE(HAVE_STRTOL)])
+AC_CHECK_FUNC(strtoll,         [AC_DEFINE(HAVE_STRTOLL)])
+AC_CHECK_FUNC(strtoul,         [AC_DEFINE(HAVE_STRTOUL)])
+AC_CHECK_FUNC(strtoull,        [AC_DEFINE(HAVE_STRTOULL)])
+AC_CHECK_FUNC(sscanf,          [AC_DEFINE(HAVE_SSCANF)])
+AC_CHECK_FUNC(wctomb,          [AC_DEFINE(HAVE_WCTOMB)])
+AC_CHECK_FUNC(timegm,          [AC_DEFINE(HAVE_TIMEGM)])
+#:END
+
+#AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r memset select socket strchr strerror strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l sprintf_l wctomb mbtowc getenv])
+AC_CHECK_FUNCS([memmove memset mkdir putenv rmdir strcasecmp strchr strdup strerror strncasecmp strrchr strstr strtol])
+
+AC_SUBST([STORM_CLIENT_ARCH], [$host_cpu])
+
+dnl this macro is used to get the arguments supplied
+dnl to the configure script (./configure --enable-debug)
+dnl Check if we have enable debug support.
+AC_MSG_CHECKING(whether to enable debugging)
+default="no"
+DEBUG=
+AC_ARG_ENABLE(debug, [  --enable-debug=[no/yes] turn on debugging
+                       [default=$default]],, enable_debug=$default)
+if test "x$enable_debug" = "xyes"; then
+   CXXFLAGS="-g -O0"
+   CFLAGS="-g -O0"
+   AC_MSG_RESULT(yes)
+else
+   CXXFLAGS="-g -O2"
+   CFLAGS="-g -O2"
+   AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(whether to enable walling)
+wall="no"
+DEBUG=
+AC_ARG_ENABLE(wall, [  --enable-wall=[no/yes] turn on debugging
+                       [wall=$default]],, enable_wall=$default)
+if test "x$enable_wall" = "xyes"; then
+   CXXFLAGS="$CXXFLAGS -Wall"
+   CFLAGS="$CFLAGS -Wall"
+   AC_MSG_RESULT(yes)
+else
+   CXXFLAGS="$CXXFLAGS"
+   CFLAGS="$CFLAGS"
+   AC_MSG_RESULT(no)
+fi
 
 AC_STORM([])
 AC_STORM_CLIENT([])
@@ -63,51 +139,21 @@ have_globus=no
 AC_GLOBUS([], have_globus=yes, have_globus=no)
 AC_MSG_RESULT(["GLOBUS found $have_globus"])
 
-AC_GLITE([])
 AC_VOMS([])
 
 AC_CGSI_GSOAP([2.7])
 AC_GSOAP([])
 
-if test "x$host_cpu" == "xx86_64"; then
-  CGSIGSOAP_VERSION="1.3.3-1.sl5"
-else
-  CGSIGSOAP_VERSION="1.3.3-1.slc4"
-fi
-
-AC_SUBST(CGSIGSOAP_VERSION)
-
-# ========================================================================
-# RPM directory
-# ========================================================================
-AC_MSG_CHECKING([for RPM directory])
-if test -z $RPMD; then
-    RPMD=$DEFAULT_RPM_DIR
-    RPMBD=$DEFAULT_RPM_DIR/rpm/tmp
-fi
-if test ! \( -d $RPMD \); then
-    AC_MSG_RESULT([no such directory "$RPMD"])
-fi
-if test ! \( -d $RPMBD \); then
-    AC_MSG_RESULT([no such directory "$RPMBD"])
-fi
-AC_MSG_RESULT(["$RMPD" found])
-AC_MSG_RESULT(["$RMPBD" found])
-AC_SUBST([RPM_DIR], [$RPMD])
-AC_SUBST([RPM_BUILD_DIR], [$RPMBD])
+#CFLAGS="$CFLAGS -x c++"
 
 # Installation prefix
-AC_PREFIX_DEFAULT([/opt/storm/client])
+#AC_PREFIX_DEFAULT([/usr])
 
 # Configuration items
 AM_CONFIG_HEADER([src/autogen/config.h])
 
-dnl =========================
-dnl Define required variables
-dnl =========================
-CFLAGS="$CFLAGS -x c++"
-
 AC_CONFIG_FILES([Makefile])
+
 AC_CONFIG_FILES([wsdl/Makefile])
 AC_CONFIG_FILES([src/clients_version.h])
 AC_CONFIG_FILES([src/Makefile])

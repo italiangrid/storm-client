@@ -17,10 +17,11 @@
 #
 
 AC_PREREQ([2.59])
-AC_INIT([storm srm client], [1.5.0])
+AC_INIT([storm srm client], [1.6.0])
 AC_CONFIG_AUX_DIR([./project])
-AM_INIT_AUTOMAKE([1.6.3 subdir-objects])
 AC_CONFIG_SRCDIR([src/clientSRM.cpp])
+AM_INIT_AUTOMAKE
+AC_CONFIG_MACRO_DIR([m4])
 
 # Release number
 osdist=`cat /etc/redhat-release | awk 'BEGIN {FS="release "} {print $2}'| awk 'BEGIN {FS="."} {print $1}'`

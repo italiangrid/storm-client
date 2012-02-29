@@ -142,7 +142,7 @@ AC_MSG_RESULT(["GLOBUS found $have_globus"])
 
 AC_VOMS([])
 
-AC_CGSI_GSOAP([2.7])
+AC_CGSI_GSOAP([])
 AC_GSOAP([])
 
 #CFLAGS="$CFLAGS -x c++"

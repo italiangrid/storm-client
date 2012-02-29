@@ -27,7 +27,7 @@ clientSRM_LDFLAGS = \
 
 clientSRM_LDADD=-lstormclients \
   -L/usr/lib64 -lglobus_gssapi_gsi -lglobus_gss_assist \
-  @CGSI_VOMS_GSOAP_CPP_PTHR_LIBS@ \
+  @CGSI_GSOAP_VOMS_CPP_PTHR_LIBS@ \
   @GSOAP_SSL_PP_LIBS@ \
   @VOMS_LIBS@ \
   -lz -lm  

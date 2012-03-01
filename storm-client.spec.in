@@ -46,13 +46,12 @@ BuildRequires: libtool
 BuildRequires: globus-gssapi-gsi-devel
 BuildRequires: globus-gss-assist-devel
 BuildRequires: gsoap-devel
-BuildRequires: CGSI_gSOAP_2.7-voms
-BuildRequires: CGSI_gSOAP_2.7-devel
+BuildRequires: CGSI-gSOAP-devel
 BuildRequires: voms
 
 Requires: globus-gssapi-gsi
 Requires: voms
-Requires: CGSI_gSOAP_2.7-voms
+Requires: CGSI-gSOAP
 Requires: gsoap
 
 %define debug_package %{nil}

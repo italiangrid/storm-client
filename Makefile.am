@@ -65,7 +65,7 @@ packaging: dist
 	/bin/cp $(SPEC_FILE) $(RPM_SPEC)
 	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -bs $(RPM_SPEC)/storm-client.spec
 	/bin/mkdir -p @MODULELOCATION@/RPMS
-        /bin/mkdir -p @MODULELOCATION@/SRPMS
+	/bin/mkdir -p @MODULELOCATION@/SRPMS
 	/bin/cp $(RPM_SRPM)/* @MODULELOCATION@/RPMS
 	/bin/ls $(RPM_RPM)
 

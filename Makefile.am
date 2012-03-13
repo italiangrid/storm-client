@@ -64,7 +64,7 @@ packaging: dist
 	/bin/cp -u @PACKAGE@-@VERSION@.tar.gz $(RPM_SOURCE)
 	/bin/cp $(SPEC_FILE) $(RPM_SPEC)
 	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -bs $(RPM_SPEC)/storm-client.spec
-	/bin/cp $(RPM_SOURCE)/* $(RPM_RPM)
+	/bin/cp $(RPM_SRPM)/* $(RPM_RPM)
 	/bin/ls $(RPM_RPM)
 
 rpm: dist

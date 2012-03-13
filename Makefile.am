@@ -60,11 +60,11 @@ RPM_SRPM = $(RPM_MAIN_DIR)/SRPMS
 RPM_DIRS = $(RPM_MAIN_DIR) $(RPM_SOURCE) $(RPM_SPEC) $(RPM_BUILD) $(RPM_RPM) $(RPM_SRPM)
 
 packaging: dist
-	/bin/mkdir -p $(RPM_DIRS); \
-	/bin/cp -u @PACKAGE@-@VERSION@.tar.gz $(RPM_SOURCE) \
-	/bin/cp $(SPEC_FILE) $(RPM_SPEC) \
-	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -bs $(RPM_SPEC)/storm-client.spec \
-	/bin/cp $(RPM_SOURCES)/* $(RPM_RPM) \
+	/bin/mkdir -p $(RPM_DIRS)
+	/bin/cp -u @PACKAGE@-@VERSION@.tar.gz $(RPM_SOURCE)
+	/bin/cp $(SPEC_FILE) $(RPM_SPEC)
+	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -bs $(RPM_SPEC)/storm-client.spec
+	/bin/cp $(RPM_SOURCES)/* $(RPM_RPM)
 	/bin/ls $(RPM_RPM)
 
 rpm: dist

@@ -24,6 +24,8 @@
 %define gsoapdir       @GSOAP_LOCATION@
 %define gsoapwsdl2hdir @GSOAP_WSDL2H_LOCATION@
 %define cgsigsoapdir   @CGSI_GSOAP_LOCATION@
+%define gsoapversion   @GSOAP_VERSION@
+%define gsoapwsdl2hversion @GSOAP_WSDL2H_VERSION@
 
 %define stormclientdir @STORM_CLIENT_LOCATION@
 
@@ -66,7 +68,7 @@ interface to a GPFS parallel filesystem.
 
 %build
 ./bootstrap
-./configure --prefix=/usr --bindir=/usr/bin --datadir=/usr/share --with-gsoap-location=%{gsoapdir} --with-gsoap-wsdl2h-location=%{gsoapwsdl2hdir} --with-gsoap-version=2.7.13 --with-gsoap-wsdl2h-version=1.2.13 --with-cgsi-gsoap-location=%{cgsigsoapdir} --with-voms-prefix=%{vomsdir} --with-voms-include=%{vomsincludedir} --with-storm-client-location=%{stormclientdir} --enable-gsoapgsi
+./configure --prefix=/usr --bindir=/usr/bin --datadir=/usr/share --with-gsoap-location=%{gsoapdir} --with-gsoap-wsdl2h-location=%{gsoapwsdl2hdir} --with-gsoap-version=%{gsoapversion} --with-gsoap-wsdl2h-version=%{gsoapwsdl2hversion} --with-cgsi-gsoap-location=%{cgsigsoapdir} --with-voms-prefix=%{vomsdir} --with-voms-include=%{vomsincludedir} --with-storm-client-location=%{stormclientdir} --enable-gsoapgsi
 make
 
 %install

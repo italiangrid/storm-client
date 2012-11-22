@@ -63,10 +63,10 @@ srpm: dist
 	/bin/mkdir -p $(RPM_DIRS)
 	/bin/cp -u @PACKAGE@-@VERSION@.tar.gz $(RPM_SOURCE)
 	/bin/cp $(SPEC_FILE) $(RPM_SPEC)
-	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --nodeps -bs $(RPM_SPEC)/$(SPEC_FILE)
+	/usr/bin/rpmbuild  --define "_topdir $(RPM_MAIN_DIR)" --define "dist .@STORM_CLIENT_SO@" --nodeps -bs $(RPM_SPEC)/$(SPEC_FILE)
 
 rpm: srpm
-	/usr/bin/rpmbuild  --rebuild --define "_topdir $(RPM_MAIN_DIR)" --define "dist .@STORM_CLIENT_SO@"  $(RPM_SRPM)/@PACKAGE@-@VERSION@-@STORM_CLIENT_AGE_NUMBER@.src.rpm
+	/usr/bin/rpmbuild  --rebuild --define "_topdir $(RPM_MAIN_DIR)" --define "dist .@STORM_CLIENT_SO@"  $(RPM_SRPM)/@PACKAGE@-@VERSION@-@STORM_CLIENT_AGE_NUMBER@.@STORM_CLIENT_SO@.src.rpm
 
 
 packaging: dist

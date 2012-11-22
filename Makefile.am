@@ -41,15 +41,6 @@ ACLOCAL_AMFLAGS = -I m4
 SPEC_FILE = \
     storm-client.spec
 
-#RPM_MAIN_DIR = $(PWD)/rpm
-#RPM_TMP_DIR = $(RPM_MAIN_DIR)/tmp
-#RPM_SOURCE = $(RPM_MAIN_DIR)/SOURCES
-#RPM_SPEC = $(RPM_MAIN_DIR)/SPECS
-#RPM_BUILD = $(RPM_MAIN_DIR)/BUILD
-#RPM_RPM = $(RPM_MAIN_DIR)/RPMS
-#RPM_SRPM = $(RPM_MAIN_DIR)/SRPMS
-#RPM_DIRS = $(RPM_MAIN_DIR) $(RPM_SOURCE) $(RPM_SPEC) $(RPM_BUILD) $(RPM_RPM) $(RPM_SRPM)
-
 RPM_MAIN_DIR = @MODULELOCATION@/rpm-build-test
 RPM_TMP_DIR = $(RPM_MAIN_DIR)/tmp
 RPM_SOURCE = $(RPM_MAIN_DIR)/SOURCES
@@ -67,7 +58,6 @@ srpm: dist
 
 rpm: srpm
 	/usr/bin/rpmbuild  --rebuild --define "_topdir $(RPM_MAIN_DIR)" --define "dist .@STORM_CLIENT_SO@"  $(RPM_SRPM)/@PACKAGE@-@VERSION@-@STORM_CLIENT_AGE_NUMBER@.@STORM_CLIENT_SO@.src.rpm
-
 
 packaging: dist
 	/bin/mkdir -p $(RPM_DIRS)

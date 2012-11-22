@@ -145,11 +145,6 @@ AC_VOMS([])
 AC_CGSI_GSOAP([])
 AC_GSOAP([])
 
-#CFLAGS="$CFLAGS -x c++"
-
-# Installation prefix
-#AC_PREFIX_DEFAULT([/usr])
-
 # Configuration items
 AM_CONFIG_HEADER([src/autogen/config.h])
 

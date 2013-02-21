@@ -26,17 +26,17 @@ Required packages:
 
 Build command:
 * on SL5  
-```bash
+<pre>
 ./bootstrap
 ./configure --prefix=/usr --sbindir=/usr/sbin --datadir=/usr/share --with-cgsi-gsoap-location=/usr --with-gsoap-location=/usr --with-gsoap-version=2.7.13 --with-gsoap-wsdl2h-version=1.2.13 --with-gsoap-wsdl2h-location=/usr --with-voms-prefix=/usr --with-voms-include=/usr/include --enable-gsoapgsi
 make rpm
-```
+</pre>
 * on SL56
-```bash
+<pre>
 ./bootstrap
 ./configure --prefix=/usr --sbindir=/usr/sbin --datadir=/usr/share --with-cgsi-gsoap-location=/usr --with-gsoap-location=/usr --with-gsoap-version=2.7.16 --with-gsoap-wsdl2h-version=1.2.16 --with-gsoap-wsdl2h-location=/usr --with-voms-prefix=/usr --with-voms-include=/usr/include --enable-gsoapgsi
 make rpm
-```
+</pre>
 
 # Contact info
 

@@ -63,6 +63,13 @@ Install the following required packages:
 * voms
 * rpm-build
 
+#### Download sources:
+
+<pre>
+git clone https://github.com/italiangrid/storm-client.git
+cd storm-client
+</pre>
+
 #### Build commands
 
 * on SL5  

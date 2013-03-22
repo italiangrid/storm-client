@@ -33,19 +33,10 @@ The other dependencies are
 
 ### Build instructions
 
-The build needs to be passed the version of gSOAP, so it is slightly different on SL5 
 <pre>
 ./bootstrap
-./configure  --with-gsoap-version=2.7.13 --with-gsoap-wsdl2h-version=1.2.13 --enable-gsoapgsi
+./configure  
 make
-</pre>
-
-and SL6 
-
-<pre>
-./bootstrap
-./configure --with-gsoap-version=2.7.16 --with-gsoap-wsdl2h-version=1.2.16 --enable-gsoapgsi
-make rpm
 </pre>
 
 # Contact info

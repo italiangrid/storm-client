@@ -17,20 +17,14 @@
 #
 
 AC_PREREQ([2.59])
-AC_INIT([storm srm client], [1.6.0])
+AC_INIT([storm srm client], [1.6.1])
 AC_CONFIG_AUX_DIR([./project])
 AC_CONFIG_SRCDIR([src/clientSRM.cpp])
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
 
-# Release number
-osdist=`cat /etc/redhat-release | awk 'BEGIN {FS="release "} {print $2}'| awk 'BEGIN {FS="."} {print $1}'`
-AC_SUBST([STORM_CLIENT_SO], [sl$osdist])
-AC_SUBST([STORM_CLIENT_AGE_NUMBER], [7])
-
 # Notices.
 AC_COPYRIGHT([See LICENCE file for details])
-AC_REVISION([$Revision: $])
 
 #Environment.
 WORKDIR=`pwd`
@@ -94,7 +88,6 @@ AC_CHECK_FUNC(wctomb,          [AC_DEFINE(HAVE_WCTOMB)])
 AC_CHECK_FUNC(timegm,          [AC_DEFINE(HAVE_TIMEGM)])
 #:END
 
-#AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r memset select socket strchr strerror strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l sprintf_l wctomb mbtowc getenv])
 AC_CHECK_FUNCS([memmove memset mkdir putenv rmdir strcasecmp strchr strdup strerror strncasecmp strrchr strstr strtol])
 
 AC_SUBST([STORM_CLIENT_ARCH], [$host_cpu])
@@ -141,19 +134,14 @@ AC_GLOBUS([], have_globus=yes, have_globus=no)
 AC_MSG_RESULT(["GLOBUS found $have_globus"])
 
 AC_VOMS([])
-
 AC_CGSI_GSOAP([])
 AC_GSOAP([])
 
-# Configuration items
 AM_CONFIG_HEADER([src/autogen/config.h])
-
 AC_CONFIG_FILES([Makefile])
 
 AC_CONFIG_FILES([wsdl/Makefile])
 AC_CONFIG_FILES([src/clients_version.h])
 AC_CONFIG_FILES([src/Makefile])
-AC_CONFIG_FILES([storm-client.spec])
 
 AC_OUTPUT
-

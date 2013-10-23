@@ -158,7 +158,6 @@ public:
     {
         int prev_index;
         char opt;
-        bool invalidOption;
         
         if (!(_parse_error_explanation.empty()))
 			_parse_error_explanation.clear();
@@ -179,10 +178,10 @@ public:
                 }
             }
         }
-        catch (PrintUsage) {
+        catch (PrintUsage&) {
             return PRINT_USAGE;
         }
-        catch (InvalidOption e) {
+        catch (InvalidOption& e) {
             _parse_error_explanation = e.getExplanation();
             return PARSE_FAILURE;
         }
@@ -252,11 +251,7 @@ public:
                 	print_Data(2, NULL, _request_SRMStatus);
                 break;
             default:
-                cout << "gSoap code: " << _soap.error << endl << endl;
-                cout << "soap_print_fault:\n";
-                soap_print_fault(&_soap, stdout);
-                cout << "\n\nsoap_print_fault_location:\n";
-                soap_print_fault_location(&_soap, stdout);
+            	cout << endl << "ERROR: " << _soap.fault->faultstring << endl;
         }
     }
 
@@ -2203,7 +2198,7 @@ private:
      */
     int tokenize(string& str, vector<string>* tokens, char separator, int minSize =0)
     {
-    	int start, end, size;
+    	size_t start, end, size;
     	
     	start = end = 0;
     	while (end < str.length()) {

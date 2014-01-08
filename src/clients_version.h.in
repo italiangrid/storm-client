@@ -15,6 +15,6 @@
  *
  */
 
-static const char* clients_version = "@VERSION@-@STORM_CLIENT_AGE_NUMBER@";
+static const char* clients_version = "@VERSION@";
 
 #endif /* _CLIENTS_VERSION_H */

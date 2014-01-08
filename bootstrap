@@ -14,12 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-mkdir -p src/autogen project rpm/tmp
+mkdir -p src/autogen project
 set -x
-
-aclocal -I m4
-
-libtoolize --force
-autoheader
-automake --foreign --add-missing --copy
-autoconf
+autoreconf -i -f 

@@ -16,7 +16,7 @@
 # Authors: Alberto Forti <alberto.forti@cnaf.infn.it>
 #
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 AC_INIT([storm srm client],[1.6.1])
 AC_CONFIG_AUX_DIR([./project])
 AC_CONFIG_SRCDIR([src/clientSRM.cpp])

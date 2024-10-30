@@ -10,7 +10,7 @@ config.log
 config.status
 *~
 aclocal.m4
-m4
+m4/*
 !m4/gsoap.m4
 !m4/voms.m4
 !m4/storm.m4

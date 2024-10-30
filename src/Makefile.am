@@ -26,7 +26,6 @@ clientSRM_LDFLAGS = \
     -rpath $(libdir)
 
 clientSRM_LDADD=-lstormclients \
-  -L/usr/lib64 -lglobus_gssapi_gsi -lglobus_gss_assist \
   @CGSI_GSOAP_VOMS_CPP_PTHR_LIBS@ \
   @GSOAP_SSL_PP_LIBS@ \
   @VOMS_LIBS@ \
@@ -72,7 +71,7 @@ libstormclients_la_SOURCES = \
     srmv2Client.cc \
     $(noinst_INCLUDES)
 
-INCLUDES=-I$(GENERATED_GSOAP_INCLUDES) \
+AM_CPPFLAGS=-I$(GENERATED_GSOAP_INCLUDES) \
     @GLOBUS_THR_CFLAGS@ \
     @STORM_CLIENT_CFLAGS@ \
     @VOMS_CFLAGS@ \

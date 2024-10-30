@@ -140,10 +140,10 @@ AC_DEFUN([AC_GSOAP],
 
     wsdl2h_cmd="`which wsdl2h`"
     
-    gsoap_wsdl2h_version="`$wsdl2h_cmd -help 2>&1|grep \"The gSOAP WSDL parser for C and C++\"| sed -e \"s/**  The gSOAP WSDL parser for C and C++//g\" -e "s/[ \t]*//g\"`"
+    gsoap_wsdl2h_version=$($wsdl2h_cmd -V 2>/dev/null)
 
     if test -z "$gsoap_wsdl2h_version" ; then
-	gsoap_wsdl2h_version="`$wsdl2h_cmd -help 2>&1|grep "release"| sed -e "s/**  The gSOAP WSDL\/Schema processor for C and C++, wsdl2h release //g" -e "s/[ \t]*//g"|head -1`"
+		wsdl2h_version=$($WSDL2H -help 2>&1 | grep release | grep -o '@<:@0-9@:>@\.@<:@0-9@:>@\.@<:@0-9@:>@*$')
     fi
 
     AC_ARG_WITH(gsoap-wsdl2h-version,
@@ -233,10 +233,11 @@ AC_DEFUN([AC_GSOAP],
     fi
 
     if test [ "$GSOAP_WSDL2H_VERSION_NUM" -ge "010216"] ; then
-        AC_MSG_RESULT([GSOAP_WSDL2H_VERSION_NUM is 1.2.16 or newer])
         WSDL2H_BACK_COMPATIBILITY="-z1"
-    else
+	elif test "$normalized_version" -ge "010200"; then
         WSDL2H_BACK_COMPATIBILITY="-z"
+    else
+		AC_MSG_ERROR([unsupported wsdl2h version: $wsdl2h_version])
     fi
 
     AC_MSG_RESULT([WSDL2H_BACK_COMPATIBILITY set to $WSDL2H_BACK_COMPATIBILITY])

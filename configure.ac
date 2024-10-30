@@ -16,8 +16,8 @@
 # Authors: Alberto Forti <alberto.forti@cnaf.infn.it>
 #
 
-AC_PREREQ([2.59])
-AC_INIT([storm srm client], [1.6.1])
+AC_PREREQ([2.71])
+AC_INIT([storm srm client],[1.6.1])
 AC_CONFIG_AUX_DIR([./project])
 AC_CONFIG_SRCDIR([src/clientSRM.cpp])
 AM_INIT_AUTOMAKE
@@ -39,7 +39,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_LIBTOOL
+LT_INIT
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 
@@ -137,7 +137,7 @@ AC_VOMS([])
 AC_CGSI_GSOAP([])
 AC_GSOAP([])
 
-AM_CONFIG_HEADER([src/autogen/config.h])
+AC_CONFIG_HEADERS([src/autogen/config.h])
 AC_CONFIG_FILES([Makefile])
 
 AC_CONFIG_FILES([wsdl/Makefile])

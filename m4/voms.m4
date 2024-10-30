@@ -20,7 +20,7 @@ AC_DEFUN([AC_VOMS],
 
   AC_ARG_WITH(
     voms-prefix,
-    AC_HELP_STRING(
+    AS_HELP_STRING(
       [--with-voms-prefix=DIR],
       [root of the voms installation]
     ),
@@ -30,7 +30,7 @@ AC_DEFUN([AC_VOMS],
 
   AC_ARG_WITH(
     voms-include,
-    AC_HELP_STRING(
+    AS_HELP_STRING(
       [--with-voms-include=DIR],
       [root of the boost installation]
     ),
@@ -63,13 +63,18 @@ AC_DEFUN([AC_VOMS],
   VOMS_LIBS="$VOMS_PATH_LIBS -lvomsapi"
 
   AC_LANG_SAVE
-  dnl AC_LANG_CPLUSPLUS
+  AC_LANG([C++])
   CPPFLAGS="$GLOBUS_THR_CFLAGS $VOMS_CFLAGS $CPPFLAGS"
   LIBS="$VOMS_LIBS $LIBS"
 
-  AC_TRY_COMPILE([ #include <voms/voms_api.h> ],
-                 [ vomsdata vo_data("","") ],
-                 [ ac_cv_vomscpp_valid=yes ], [ac_cv_vomscpp_valid=no ])
+  AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+      [[#include <voms/voms_api.h>
+      ]],
+      [[vomsdata vo_data("","")]])],
+   [ ac_cv_vomscpp_valid=yes ],
+   [ac_cv_vomscpp_valid=no ]
+  )
   CPPFLAGS=$ac_save_CPPFLAGS
   LIBS=$ac_save_LIBS
   AC_LANG_RESTORE

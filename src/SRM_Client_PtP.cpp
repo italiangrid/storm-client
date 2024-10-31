@@ -17,8 +17,8 @@
 
 SRM_Client_PtP::SRM_Client_PtP() : SRM_Client_Common_template("PtP")
 {
-    _status_request = storm::soap_calloc<struct ns1__srmStatusOfPutRequestRequest>(&_soap);
-    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfPutRequestResponse_>(&_soap);
+    _status_request = storm::soap_calloc<struct ns1__srmStatusOfPutRequestRequest>(_soap);
+    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfPutRequestResponse_>(_soap);
 }
 
 void SRM_Client_PtP::print_Usage_Request()
@@ -101,7 +101,7 @@ int SRM_Client_PtP::execute_Request()
 { 
     int stat;
 
-    stat = soap_call_ns1__srmPrepareToPut(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    stat = soap_call_ns1__srmPrepareToPut(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return stat;
 }
 
@@ -113,9 +113,9 @@ void SRM_Client_PtP::set_Poll_Inputdata()
     _status_request->requestToken = _response->srmPrepareToPutResponse->requestToken;
     _status_request->authorizationID = _request->authorizationID;
     if (_request->arrayOfFileRequests != NULL) {
-	    _status_request->arrayOfTargetSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(&_soap);
+	    _status_request->arrayOfTargetSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(_soap);
 	    arraySize = _request->arrayOfFileRequests->__sizerequestArray;
-	    _status_request->arrayOfTargetSURLs->urlArray = storm::soap_calloc<char>(&_soap, arraySize);
+	    _status_request->arrayOfTargetSURLs->urlArray = storm::soap_calloc<char>(_soap, arraySize);
 	    _status_request->arrayOfTargetSURLs->__sizeurlArray = arraySize;
 	    for (i=0; i<arraySize; i++) {
 	        _status_request->arrayOfTargetSURLs->urlArray[i] = _request->arrayOfFileRequests->requestArray[i]->targetSURL; 
@@ -129,7 +129,7 @@ int SRM_Client_PtP::poll_Request()
 {
     int stat;
 
-    stat = soap_call_ns1__srmStatusOfPutRequest(&_soap, _endpoint, _serviceName.c_str(),
+    stat = soap_call_ns1__srmStatusOfPutRequest(_soap, _endpoint, _serviceName.c_str(),
                                                 _status_request, _status_response_);
     return stat;
 }

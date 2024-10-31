@@ -16,7 +16,10 @@
  */
 
 #include <stdexcept>
+#include "stdsoap2.h"
+extern "C" {
 #include "srmv2H.h"
+}
 #include "storm_util.hpp"
 #include "soap_util.hpp"
 #include "SRM_Service.hpp"
@@ -55,7 +58,7 @@ protected:
     virtual int parse_RequestOptions(char opt, int index, int argc, char** argv) = 0;
     virtual int execute_Request() = 0;
     virtual void set_Poll_Inputdata() {}
-    virtual int poll_Request() { return _soap.error; }
+    virtual int poll_Request() { return _soap->error; }
     virtual void set_Request_Poll_Outputdata() {}
     
 public:
@@ -63,7 +66,8 @@ public:
     virtual void printRequestOutputdata() = 0;
     virtual void* getRequestOutputdata() = 0;
 
-    SRM_Client_Common(string serviceName) : _serviceName(serviceName), _programName("clientSRM"),
+    SRM_Client_Common(string serviceName) : _soap(soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE)),
+                                            _serviceName(serviceName), _programName("clientSRM"),
                                             _pollFlag(false), _verboseLevel_print_NULL(false),
                                             _verboseLevel_print_Input(false),
                                             _verboseLevel_print_GlobalOptions(false),
@@ -71,33 +75,35 @@ public:
                                             _verboseLevel_print_Output(true),
                                             _verboseLevel_print_SepLines(true)
     {
-        // Initialize GSOAP stuff and CGSI plugin
-        soap_init(&_soap);
 #ifdef GSI_PLUGINS
         if (_serviceName == "Copy") {
         _flags = CGSI_OPT_DISABLE_NAME_CHECK|CGSI_OPT_DELEG_FLAG;
         } else {
         	_flags = CGSI_OPT_DISABLE_NAME_CHECK;
         }
-        soap_register_plugin_arg(&_soap, client_cgsi_plugin, &_flags);
+        soap_register_plugin_arg(_soap, client_cgsi_plugin, &_flags);
 #endif
         // Allocate memory for the request input/output data structures
-        _request = storm::soap_calloc<srm_request_t>(&_soap);
-        _response = storm::soap_calloc<srm_response_t>(&_soap);
+        _request = storm::soap_calloc<srm_request_t>(_soap);
+        _response = storm::soap_calloc<srm_response_t>(_soap);
     }
     
     ~SRM_Client_Common()
     {
-        soap_destroy(&_soap);
-        soap_end(&_soap);
-        soap_done(&_soap);
+        if (_soap)
+        {
+            soap_destroy(_soap);
+            soap_end(_soap);
+            soap_done(_soap);
+            soap_free(_soap);
+        }
     }
     
     /** Get service name */
     string getServiceName() { return _serviceName; }
     
     /** Set endpoint */
-    void setEndpoint(string endpoint) { _endpoint = soap_strdup(&_soap, endpoint.c_str()); }
+    void setEndpoint(string endpoint) { _endpoint = soap_strdup(_soap, endpoint.c_str()); }
      
     /** Get endpoint */
     char* getEndpoint() { return _endpoint; }
@@ -245,13 +251,13 @@ public:
         	return;
         }
         	
-        switch (_soap.error) {
+        switch (_soap->error) {
             case SOAP_OK:
             	if (_request_SRMStatus != NULL)
                 	print_Data(2, NULL, _request_SRMStatus);
                 break;
             default:
-            	cout << endl << "ERROR: " << _soap.fault->faultstring << endl;
+            	cout << endl << "ERROR: " << _soap->fault->faultstring << endl;
         }
     }
 
@@ -283,7 +289,7 @@ protected:
             throw;
         }
         
-        *req_param = storm::soap_calloc<arg_t>(&_soap);
+        *req_param = storm::soap_calloc<arg_t>(_soap);
         if (string2num(**req_param, optArg))
             throw InvalidOption(opt, "not a number");
         
@@ -332,7 +338,7 @@ protected:
         catch (...) {
             throw;
         }
-        *req_param = soap_strdup(&_soap, optArg.c_str());
+        *req_param = soap_strdup(_soap, optArg.c_str());
         
         return index;
     }
@@ -369,7 +375,7 @@ protected:
     		else
     			throw InvalidOption(opt, "illegal value: " + optArg);
 			
-        *req_param = storm::soap_calloc<xsd__boolean>(&_soap);
+        *req_param = storm::soap_calloc<xsd__boolean>(_soap);
         **req_param = boolVal;
         
         return index;
@@ -433,10 +439,10 @@ protected:
         vector<string> tokens;
         numItems = tokenize(optArg, &tokens, ',');
         // Allocate memory for the req_param structure
-        extraInfoStructure = storm::soap_calloc<struct ns1__ArrayOfTExtraInfo>(&_soap);
+        extraInfoStructure = storm::soap_calloc<struct ns1__ArrayOfTExtraInfo>(_soap);
 		extraInfoStructure->__sizeextraInfoArray = numItems;
 		if (numItems > 0)
-        	extraInfoStructure->extraInfoArray = storm::soap_calloc<struct ns1__TExtraInfo>(&_soap, numItems);
+        	extraInfoStructure->extraInfoArray = storm::soap_calloc<struct ns1__TExtraInfo>(_soap, numItems);
     	else
     		extraInfoStructure->extraInfoArray = NULL;
         // Fill the output structure with the couples (key.value)
@@ -449,14 +455,14 @@ protected:
         	if (nc > 2)
         		throw InvalidOption(opt, "illegal format (key.value)");
         	if (nc > 0) {
-        		extraInfo = extraInfoStructure->extraInfoArray[i] = storm::soap_calloc<struct ns1__TExtraInfo>(&_soap);
+        		extraInfo = extraInfoStructure->extraInfoArray[i] = storm::soap_calloc<struct ns1__TExtraInfo>(_soap);
 				if (!(couple[1].empty()))
-    				extraInfo->value = soap_strdup(&_soap, couple[1].c_str());
+    				extraInfo->value = soap_strdup(_soap, couple[1].c_str());
 				else
 					extraInfo->value = NULL;
 				couple.pop_back();
     			if (!(couple[0].empty()))
-        			extraInfo->key = soap_strdup(&_soap, couple[0].c_str());
+        			extraInfo->key = soap_strdup(_soap, couple[0].c_str());
 				else
 					extraInfo->key = NULL;
     			couple.pop_back();
@@ -495,8 +501,8 @@ protected:
         }
         
         /* Memory allocation for the output structure */
-        req = storm::soap_calloc<struct ns1__ArrayOfTPutFileRequest>(&_soap);
-        req->requestArray = storm::soap_calloc<struct ns1__TPutFileRequest>(&_soap, numElements);
+        req = storm::soap_calloc<struct ns1__ArrayOfTPutFileRequest>(_soap);
+        req->requestArray = storm::soap_calloc<struct ns1__TPutFileRequest>(_soap, numElements);
         req->__sizerequestArray = numElements;
         /* Parse arguments */
         for (i=0; i<numElements; i++, index++) {
@@ -506,7 +512,7 @@ protected:
         		throw InvalidOption(opt, "illegal format (SURL,expectedFileSize)");
         	if (n > 0) {
         		try {
-            		req->requestArray[i] = storm::soap_calloc<struct ns1__TPutFileRequest>(&_soap);
+            		req->requestArray[i] = storm::soap_calloc<struct ns1__TPutFileRequest>(_soap);
             		// Get SURL
             		char* str = const_cast<char*> (arg[0].c_str());
             		parse_SURL(0, 1, &str, &(req->requestArray[i]->targetSURL), WITHOUT_OPTION);
@@ -550,7 +556,7 @@ protected:
     		try {
 	    		if (arg[0].empty())
 	            	throw InvalidOption(opt, "retentionPolicy is required");
-	        	req = storm::soap_calloc<struct ns1__TRetentionPolicyInfo>(&_soap);
+	        	req = storm::soap_calloc<struct ns1__TRetentionPolicyInfo>(_soap);
 	        	char* str = const_cast<char*> (arg[0].c_str());
 	        	parse_Arg_enum(0, 1, &str, &(req->retentionPolicy), WITHOUT_OPTION);
 	        	if (!(arg[1].empty())) {
@@ -588,7 +594,7 @@ protected:
         if ((n<1) || (n>3))
         	throw InvalidOption(opt, "<isDir,recursive,numLevels>");
     
-        req = storm::soap_calloc<struct ns1__TDirOption>(&_soap);
+        req = storm::soap_calloc<struct ns1__TDirOption>(_soap);
         // Get <isDir>
         if (arg[0].empty())
             throw InvalidOption(opt, "isDir parameter is required");
@@ -683,11 +689,11 @@ protected:
         }
         // Now the number of elements is known and the parsed values can be assigned to req
         int numElements = surls.size();
-        struct ns1__ArrayOfTGetFileRequest* req = storm::soap_calloc<struct ns1__ArrayOfTGetFileRequest>(&_soap);
+        struct ns1__ArrayOfTGetFileRequest* req = storm::soap_calloc<struct ns1__ArrayOfTGetFileRequest>(_soap);
         req->__sizerequestArray = numElements;
-        req->requestArray = storm::soap_calloc<struct ns1__TGetFileRequest>(&_soap, numElements);
+        req->requestArray = storm::soap_calloc<struct ns1__TGetFileRequest>(_soap, numElements);
         for (int i=0; i<numElements; i++) {
-            req->requestArray[i] = storm::soap_calloc<struct ns1__TGetFileRequest>(&_soap);
+            req->requestArray[i] = storm::soap_calloc<struct ns1__TGetFileRequest>(_soap);
             req->requestArray[i]->sourceSURL = surls[i];
             req->requestArray[i]->dirOption = dirOpts[i];
         }
@@ -774,12 +780,12 @@ protected:
         }
         // Now the number of elements is known and the parsed values can be assigned to req
         int numElements = dirOpts.size();
-        struct ns1__ArrayOfTCopyFileRequest* req = storm::soap_calloc<struct ns1__ArrayOfTCopyFileRequest>(&_soap);
+        struct ns1__ArrayOfTCopyFileRequest* req = storm::soap_calloc<struct ns1__ArrayOfTCopyFileRequest>(_soap);
         req->__sizerequestArray = numElements;
-        req->requestArray = storm::soap_calloc<struct ns1__TCopyFileRequest>(&_soap, numElements);
+        req->requestArray = storm::soap_calloc<struct ns1__TCopyFileRequest>(_soap, numElements);
         int i, j;
         for (i=0, j=0; i<numElements; i++) {
-            req->requestArray[i] = storm::soap_calloc<struct ns1__TCopyFileRequest>(&_soap);
+            req->requestArray[i] = storm::soap_calloc<struct ns1__TCopyFileRequest>(_soap);
             req->requestArray[i]->sourceSURL = surls[j++];
             req->requestArray[i]->targetSURL = surls[j++];
             req->requestArray[i]->dirOption = dirOpts[i];
@@ -832,9 +838,9 @@ protected:
         
         // Now we know the number of elements and we can assign the parsed values to req
         int numElements = surls.size();
-        struct ns1__ArrayOfAnyURI* req = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(&_soap);
+        struct ns1__ArrayOfAnyURI* req = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(_soap);
         req->__sizeurlArray = numElements;
-        req->urlArray = storm::soap_calloc<char>(&_soap, numElements);
+        req->urlArray = storm::soap_calloc<char>(_soap, numElements);
         for (int i=0; i<numElements; i++) {
             req->urlArray[i] = surls[i];
         }
@@ -862,15 +868,15 @@ protected:
         }
         
 		numElements = tokenize(optArg, &tokens, ',');
-        req = storm::soap_calloc<struct ns1__ArrayOfString>(&_soap);
+        req = storm::soap_calloc<struct ns1__ArrayOfString>(_soap);
         if (numElements > 0)
-        	req->stringArray = storm::soap_calloc<char>(&_soap, numElements);
+        	req->stringArray = storm::soap_calloc<char>(_soap, numElements);
     	else
     		// WARNING: wanted behavior (for test purposes)
     		req->stringArray = NULL;
         req->__sizestringArray = numElements;
         for (int i=0; i<numElements; i++) {
-            req->stringArray[i] = soap_strdup(&_soap, tokens[i].c_str());
+            req->stringArray[i] = soap_strdup(_soap, tokens[i].c_str());
         }
         *req_param = req;
         return index;
@@ -893,10 +899,10 @@ protected:
         }
         vector<string> token;
         int numElements = tokenize(optArg, &token, ',');
-        struct ns1__ArrayOfUnsignedLong* req = storm::soap_calloc<struct ns1__ArrayOfUnsignedLong>(&_soap);
+        struct ns1__ArrayOfUnsignedLong* req = storm::soap_calloc<struct ns1__ArrayOfUnsignedLong>(_soap);
         req->__sizeunsignedLongArray = numElements;
         if (numElements > 0) {
-            req->unsignedLongArray = static_cast<ULONG64*> (soap_malloc(&_soap, sizeof(ULONG64)*numElements));
+            req->unsignedLongArray = static_cast<ULONG64*> (soap_malloc(_soap, sizeof(ULONG64)*numElements));
             int i = 0;
 	        for (; i<numElements; i++) {
                 ULONG64 u;
@@ -932,7 +938,7 @@ protected:
             	throw;
             currentOpt = getOpt(argv[index]);
         }
-        struct ns1__TTransferParameters* req = storm::soap_calloc<struct ns1__TTransferParameters>(&_soap);
+        struct ns1__TTransferParameters* req = storm::soap_calloc<struct ns1__TTransferParameters>(_soap);
         
         if (currentOpt == OPT_TTRANSFERPARAMETERS) {
             try {
@@ -1000,7 +1006,7 @@ protected:
             if (hasOption)
                 index = parse_Arg(index, argc, argv, req_param);
             else {
-                *req_param = soap_strdup(&_soap, argv[index]);
+                *req_param = soap_strdup(_soap, argv[index]);
                 index++;
             }
             
@@ -1061,7 +1067,7 @@ protected:
         catch (...) {
             throw;
         }
-        *req_param = storm::soap_calloc<enum_t>(&_soap);
+        *req_param = storm::soap_calloc<enum_t>(_soap);
         **req_param = enum_t(val);
         return index;
     }
@@ -2265,7 +2271,7 @@ protected:
     static const bool WITHOUT_OPTION = false;
     static const bool NEW_LINE = true;
     
-    struct soap _soap;
+    struct soap* _soap;
     string _serviceName;
     string _programName;
     char* _endpoint;

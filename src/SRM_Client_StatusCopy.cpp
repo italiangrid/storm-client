@@ -17,8 +17,8 @@
 
 SRM_Client_StatusCopy::SRM_Client_StatusCopy() : SRM_Client_Common_template("StatusCopy")
 {
-    _status_request = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestRequest>(&_soap);
-    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestResponse_>(&_soap);
+    _status_request = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestRequest>(_soap);
+    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestResponse_>(_soap);
 }
 
 void SRM_Client_StatusCopy::print_Usage_Request()
@@ -69,7 +69,7 @@ int SRM_Client_StatusCopy::execute_Request()
 { 
     int stat;
 
-    stat = soap_call_ns1__srmStatusOfCopyRequest(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    stat = soap_call_ns1__srmStatusOfCopyRequest(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return stat;
 }
 

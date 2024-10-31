@@ -40,8 +40,8 @@ int SRM_Client_Ping::parse_RequestOptions(char opt, int index, int argc, char** 
 
 void SRM_Client_Ping::set_Request_Status()
 {
-    if (_soap.error == 0) {
-    	_request_SRMStatus = storm::soap_calloc<struct ns1__TReturnStatus>(&_soap);
+    if (_soap->error == 0) {
+    	_request_SRMStatus = storm::soap_calloc<struct ns1__TReturnStatus>(_soap);
     	_request_SRMStatus->statusCode = SRM_USCORESUCCESS;
     	_request_SRMStatus->explanation = "SRM server successfully contacted";
     }
@@ -55,7 +55,7 @@ int SRM_Client_Ping::execute_Request()
 
     cout << "execute Request with:" << _serviceName.c_str() << endl;
     cout << "started calling ns1__srmPing:" << endl;
-    gSoapCode = soap_call_ns1__srmPing(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    gSoapCode = soap_call_ns1__srmPing(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     cout << "finished calling ns1__srmPing:" << endl;
     
     return gSoapCode;

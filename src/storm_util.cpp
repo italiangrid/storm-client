@@ -16,7 +16,10 @@
 //#define _GNU_SOURCE
 #include "storm_util.hpp"
 #include <string.h>
+#include "stdsoap2.h"
+extern "C" {
 #include "srmv2H.h"
+}
 
 int convertPermission(char *mode)
 {

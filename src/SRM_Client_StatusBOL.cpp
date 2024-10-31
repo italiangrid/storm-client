@@ -17,8 +17,8 @@
 
 SRM_Client_StatusBOL::SRM_Client_StatusBOL() : SRM_Client_Common_template("StatusBOL")
 {
-    _status_request = storm::soap_calloc<struct ns1__srmStatusOfBringOnlineRequestRequest>(&_soap);
-    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfBringOnlineRequestResponse_>(&_soap);
+    _status_request = storm::soap_calloc<struct ns1__srmStatusOfBringOnlineRequestRequest>(_soap);
+    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfBringOnlineRequestResponse_>(_soap);
 }
 
 void SRM_Client_StatusBOL::print_Usage_Request()
@@ -65,7 +65,7 @@ int SRM_Client_StatusBOL::execute_Request()
 { 
     int stat;
 
-    stat = soap_call_ns1__srmStatusOfBringOnlineRequest(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    stat = soap_call_ns1__srmStatusOfBringOnlineRequest(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return stat;
 }
 

@@ -52,7 +52,7 @@ int SRM_Client_GetSpaceMetaData::execute_Request()
 { 
     int gSoapCode;
 
-    gSoapCode = soap_call_ns1__srmGetSpaceMetaData(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    gSoapCode = soap_call_ns1__srmGetSpaceMetaData(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return gSoapCode;
 }
 

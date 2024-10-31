@@ -60,7 +60,7 @@ int SRM_Client_Mv::execute_Request()
 { 
     int gSoapCode;
 
-    gSoapCode = soap_call_ns1__srmMv(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    gSoapCode = soap_call_ns1__srmMv(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return gSoapCode;
 }
 

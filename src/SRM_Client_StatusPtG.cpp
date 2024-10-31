@@ -17,8 +17,8 @@
 
 SRM_Client_StatusPtG::SRM_Client_StatusPtG() : SRM_Client_Common_template("StatusPtG")
 {
-    _status_request = storm::soap_calloc<struct ns1__srmStatusOfGetRequestRequest>(&_soap);
-    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfGetRequestResponse_>(&_soap);
+    _status_request = storm::soap_calloc<struct ns1__srmStatusOfGetRequestRequest>(_soap);
+    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfGetRequestResponse_>(_soap);
 }
 
 void SRM_Client_StatusPtG::print_Usage_Request()
@@ -65,7 +65,7 @@ int SRM_Client_StatusPtG::execute_Request()
 { 
     int stat;
 
-    stat = soap_call_ns1__srmStatusOfGetRequest(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    stat = soap_call_ns1__srmStatusOfGetRequest(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return stat;
 }
 

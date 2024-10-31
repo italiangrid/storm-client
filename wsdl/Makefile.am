@@ -30,7 +30,7 @@ $(FLAG_FILE):
 	touch $(FLAG_FILE)
 	mkdir -p $(top_srcdir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@
 	@WSDL2H@ -v @WSDL2H_BACK_COMPATIBILITY@ -w -t $(top_srcdir)/wsdl/typemap.dat $(top_srcdir)/wsdl/srm.v2.2.wsdl -c -e -y -o $(top_srcdir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@/srm.v2.2.h
-	cd $(top_srcdir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@; @SOAPCPP2@ -C -c -p srmv2 srm.v2.2.h; mv srmv2C.c srmv2C.cc; mv srmv2Client.c srmv2Client.cc; cd ..
+	cd $(top_srcdir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@; @SOAPCPP2@ -C -c -p srmv2 srm.v2.2.h
 
 clean-local:
 	rm -rf $(top_srcdir)/wsdl/@GSOAP_GENERATED_CODE_DIR_NAME@

@@ -17,8 +17,8 @@
 
 SRM_Client_Copy::SRM_Client_Copy() : SRM_Client_Common_template("Copy")
 {
-    _status_request = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestRequest>(&_soap);
-    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestResponse_>(&_soap);
+    _status_request = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestRequest>(_soap);
+    _status_response_ = storm::soap_calloc<struct ns1__srmStatusOfCopyRequestResponse_>(_soap);
 }
 
 void SRM_Client_Copy::print_Usage_Request()
@@ -97,7 +97,7 @@ int SRM_Client_Copy::execute_Request()
 { 
     int stat;
 
-    stat = soap_call_ns1__srmCopy(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    stat = soap_call_ns1__srmCopy(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return stat;
 }
 
@@ -109,12 +109,12 @@ void SRM_Client_Copy::set_Poll_Inputdata()
     _status_request->requestToken = _response->srmCopyResponse->requestToken;
     _status_request->authorizationID = _request->authorizationID;
     if (_request->arrayOfFileRequests != NULL) {
-	    _status_request->arrayOfSourceSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(&_soap);
-	    _status_request->arrayOfTargetSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(&_soap);
+	    _status_request->arrayOfSourceSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(_soap);
+	    _status_request->arrayOfTargetSURLs = storm::soap_calloc<struct ns1__ArrayOfAnyURI>(_soap);
 	    arraySize = _request->arrayOfFileRequests->__sizerequestArray;
 	    
-	    _status_request->arrayOfSourceSURLs->urlArray = storm::soap_calloc<char>(&_soap, arraySize);
-	    _status_request->arrayOfTargetSURLs->urlArray = storm::soap_calloc<char>(&_soap, arraySize);
+	    _status_request->arrayOfSourceSURLs->urlArray = storm::soap_calloc<char>(_soap, arraySize);
+	    _status_request->arrayOfTargetSURLs->urlArray = storm::soap_calloc<char>(_soap, arraySize);
 	    _status_request->arrayOfSourceSURLs->__sizeurlArray = arraySize;
 	    _status_request->arrayOfTargetSURLs->__sizeurlArray = arraySize;
 	    
@@ -133,7 +133,7 @@ int SRM_Client_Copy::poll_Request()
 {
     int stat;
 
-    stat = soap_call_ns1__srmStatusOfCopyRequest(&_soap, _endpoint, _serviceName.c_str(),
+    stat = soap_call_ns1__srmStatusOfCopyRequest(_soap, _endpoint, _serviceName.c_str(),
                                                 _status_request, _status_response_);
     return stat;
 }

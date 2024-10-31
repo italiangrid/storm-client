@@ -27,7 +27,7 @@ clientSRM_LDFLAGS = \
 
 clientSRM_LDADD=-lstormclients \
   @CGSI_GSOAP_VOMS_CPP_PTHR_LIBS@ \
-  @GSOAP_SSL_PP_LIBS@ \
+  @GSOAP_SSL_LIBS@ \
   @VOMS_LIBS@ \
   -lz -lm  
 
@@ -67,8 +67,8 @@ libstormclients_la_SOURCES = \
     SRM_Client_BOL.cpp SRM_Client_BOL.hpp \
     SRM_Client_StatusBOL.cpp SRM_Client_StatusBOL.hpp \
     SRM_Client_Common.hpp SRM_Service.hpp SRM_Client_All.hpp \
-    srmv2C.cc \
-    srmv2Client.cc \
+    srmv2C.c \
+    srmv2Client.c \
     $(noinst_INCLUDES)
 
 AM_CPPFLAGS=-I$(GENERATED_GSOAP_INCLUDES) \
@@ -76,20 +76,20 @@ AM_CPPFLAGS=-I$(GENERATED_GSOAP_INCLUDES) \
     @STORM_CLIENT_CFLAGS@ \
     @VOMS_CFLAGS@ \
     @CGSI_GSOAP_CFLAGS@ \
-    @GSOAP_SSL_PP_CFLAGS@ \
+    @GSOAP_SSL_CFLAGS@ \
     $(MTC_CFLAGS)
 
 MAINTAINERCLEANFILES=Makefile.in \
-    srmv2C.cc \
-    srmv2Client.cc
+    srmv2C.c \
+    srmv2Client.c
 
-srmv2C.cc:
-	@echo "Copying file \"srmv2C.cc\" from $(GENERATED_GSOAP_INCLUDES)"
-	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2C.cc .
+srmv2C.c:
+	@echo "Copying file \"srmv2C.c\" from $(GENERATED_GSOAP_INCLUDES)"
+	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2C.c .
 
-srmv2Client.cc:
-	@echo "Copying file \"srmv2Server.cc\" from $(GENERATED_GSOAP_INCLUDES)"
-	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2Client.cc .
+srmv2Client.c:
+	@echo "Copying file \"srmv2Server.c\" from $(GENERATED_GSOAP_INCLUDES)"
+	/bin/cp $(GENERATED_GSOAP_INCLUDES)/srmv2Client.c .
 
 distclean-local:
-	rm -f srmv2C.cc srmv2Client.cc
+	rm -f srmv2C.c srmv2Client.c

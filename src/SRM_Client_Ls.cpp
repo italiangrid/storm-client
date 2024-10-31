@@ -80,7 +80,7 @@ int SRM_Client_Ls::execute_Request()
 { 
     int gSoapCode;
 
-    gSoapCode = soap_call_ns1__srmLs(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    gSoapCode = soap_call_ns1__srmLs(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return gSoapCode;
 }
 

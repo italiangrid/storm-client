@@ -56,7 +56,7 @@ int SRM_Client_PutDone::execute_Request()
 { 
     int gSoapCode;
 
-    gSoapCode = soap_call_ns1__srmPutDone(&_soap, _endpoint, _serviceName.c_str(), _request, _response);
+    gSoapCode = soap_call_ns1__srmPutDone(_soap, _endpoint, _serviceName.c_str(), _request, _response);
     return gSoapCode;
 }
 

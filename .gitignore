@@ -28,3 +28,6 @@ src/clients_version.h
 *.lo
 srmv2C.cc
 srmv2Client.cc
+src/clientSRM
+src/srmv2C.c
+src/srmv2Client.c
